@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Crypto Exchange Rate</title>
+		<title>Currency Exchange Rate</title>
 		<!-- Don't use this in production: -->
 		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 		<!-- ----------------- Bootstrap header START ----------------- -->
@@ -19,11 +19,12 @@
 
 	<body>
 		<div class='container-fluid text-center' >
-		<h1 class='display-3'>Crypto Exchange Rate</h1>
+		<!-- <h1 class='display-3'>Crypto Exchange Rate</h1> -->
 		<!-- We will put our React component inside this div. -->
 		
 
-					<div  id="root" ></div>
+					<div  id="root1" ></div>
+					<div  id="root2" ></div>
 		</div>
 		
 	
@@ -48,7 +49,12 @@
 		<!-- Load our React component. -->
 
 		<script
-			src="cryptoExchange.jsx"
+			src="CurrencyRate.jsx"
+			defer
+			type="text/babel"
+		></script>
+		<script
+			src="test.js"
 			defer
 			type="text/babel"
 		></script>
