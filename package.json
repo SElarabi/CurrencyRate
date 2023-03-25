@@ -1,0 +1,24 @@
+{
+	"name": "currencyrate",
+	"version": "1.0.0",
+	"description": "international currency rate with latest exchange rate from international bank database",
+	"main": "currencyRate.jsx",
+	"scripts": {
+		"build": "babel src -d lib",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"exchange",
+		"rate"
+	],
+	"author": "Eddie Larabi",
+	"license": "MIT",
+	"devDependencies": {
+		"@babel/cli": "^7.21.0",
+		"@babel/core": "^7.21.3",
+		"@babel/preset-env": "^7.20.2"
+	},
+	"dependencies": {
+		"axios": "^1.3.4"
+	}
+}
