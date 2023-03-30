@@ -1,10 +1,15 @@
 /** @format */
 
+/** @format */
+
 const CurrencyExchangeRate = () => {
   console.log("RENDERING");
   const { useReducer, useEffect } = React;
 
   const initialState = {
+    x: "",
+    symbolsData: "",
+    symbols: "",
     rateData: "",
     currencies: [],
     currencyData: "",
@@ -12,6 +17,7 @@ const CurrencyExchangeRate = () => {
     currencyValue: 0,
     currencyBase: "USD",
     rateUrl: `https://api.exchangerate.host/latest?base=USD&&places=2`,
+    symbolsUrl: "https://api.exchangerate.host/symbols",
   };
   //  API DOCUMENTATION FOR THIS URL CAN BE FOUND AT  https://exchangerate.host/#/#docs
   const reducer = (state, action) => {
@@ -35,6 +41,13 @@ const CurrencyExchangeRate = () => {
           ...state,
           url: newUrl,
         };
+      case " SET_CURRENCY_SYMBOLS":
+        return {
+          ...state,
+          symbolsData: action.payload,
+          symbols: Object.keys(action.payload.symbols),
+          x: action.payload.symbols,
+        };
 
       default:
         return state;
@@ -43,19 +56,32 @@ const CurrencyExchangeRate = () => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const getdata = (newUrl) => {
+  const getdata = () => {
     console.log("Fetching data...");
-    fetch(newUrl)
-      .then((response) => response.json())
+    const urls = [state.symbolsUrl, state.rateUrl];
+    let arr = []; // will use it as transit to hold data retrieved to set all states.
+
+    const requests = urls.map((url) => axios.get(url)); // returns an array of promises
+    axios.all(requests);
+
+    axios
+      .all(requests)
+      .then((responses) => responses.map((res) => res.data)) // extract data from each response
       .then((data) => {
-        dispatch({ type: "FETCH_DATA", payload: data });
+        dispatch({ type: "FETCH_DATA", payload: data[1] });
+        state.symbolsData = data[0];
+        state.symbols = data[0].symbols;
+
+        console.log(state.symbols.AED.description);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        console.log("wald le7ram");
+      });
   };
   useEffect(() => {
-    const urls = [state.symbolsUrl, state.rateUrl];
-    getdata(state.rateUrl);
-  }, [state.rateUrl]);
+    getdata();
+  }, []);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -63,23 +89,12 @@ const CurrencyExchangeRate = () => {
     dispatch({ type: "CHANGE_CURRENCY", payload: x });
   };
 
-  // symbols
-  var requestURL = "https://api.exchangerate.host/symbols";
-  var request = new XMLHttpRequest();
-  request.open("GET", requestURL);
-  request.responseType = "json";
-  request.send();
-
-  request.onload = function () {
-    var response = request.response;
-    console.log(response);
-  };
   return (
     <div className="container-fluid">
-      <h1 className=" p-3 border bg-ligh">Currency Exchange Rates</h1>
-      <div className="row p-3 border bg-ligh">
-        <div className="col">
-          <label className=" p-2 border bg-ligh" htmlFor=" currecySelect">
+      <h1 className=" p-2 ">Currency Exchange Rates</h1>
+      <div className="row p-2 ">
+        <div className="col text-head">
+          <label className=" p-2 " htmlFor=" currecySelect">
             Select Currency
           </label>
           <select
@@ -88,7 +103,7 @@ const CurrencyExchangeRate = () => {
             aria-label="Default select example"
             onChange={(e) => handleChange(e)}
           >
-            <option className="form-select p-2 border bg-ligh"></option>
+            <option className="form-select p-2 "></option>
             {state.currencies.map((currency) => (
               <option key={currency} value={currency}>
                 {state.rateData && currency}
@@ -96,33 +111,35 @@ const CurrencyExchangeRate = () => {
             ))}
           </select>
           <br></br>
-          <h1 className="Display-6 bg-info p-3 border bg-ligh">
+          {/* display 1 US CONVERSION */}
+          <h1 className="Display-6 bg-info p-3 ">
             1 {state.currencyBase} =
             {state.selectedCurrency
-              ? `${state.currencyValue} ${state.selectedCurrency}`
+              ? `${state.currencyValue} ${state.selectedCurrency} ${
+                  state.symbols[state.selectedCurrency].description
+                }`
               : null}
           </h1>
         </div>
       </div>
-      {/* list of currencies, exchange rate to current base */}
-      <div className="row p-3 border bg-ligh">
-        <div className="col-4">
+      {/* list of currencies info */}
+      <div className="row p-2 ">
+        <div className="col-6">
           <ul className="list-group">
-            {state.currencies.map((currency) => (
-              <li className="list-group-item" key={currency} value={currency}>
+            {Object.keys(state.symbols).map((item) => (
+              <li className="list-group-item" key={item}>
                 <p>
-                  {state.currencyData[currency]} {currency}
+                  {state.symbols[item].description} :{item} :{" "}
+                  {state.currencyData[item]}
                 </p>
               </li>
             ))}
           </ul>
         </div>
-        <div className="col-8"></div>
       </div>
-      {console.log("Component rendered")}
     </div>
   );
 };
 
-// const root = ReactDOM.createRoot(document.getElementById("root2"));
-// root.render(<CurrencyExchangeRate />);
+const root = ReactDOM.createRoot(document.getElementById("root1"));
+root.render(<CurrencyExchangeRate />);

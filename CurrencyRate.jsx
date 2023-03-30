@@ -1,8 +1,8 @@
 /** @format */
 
 const CurrencyExchangeRate = () => {
+  console.log("RENDERING");
   const { useState, useEffect } = React;
-
   const [currData, setCurrData] = useState("");
   const [currencies, setCurrencies] = useState([]);
   const [currencyData, setCurrencyData] = useState("");
@@ -17,6 +17,7 @@ const CurrencyExchangeRate = () => {
 
   const getdata = () => {
     console.log("Fetching data...");
+
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
@@ -25,9 +26,9 @@ const CurrencyExchangeRate = () => {
         const arr = Object.keys(rates);
         // , Object.values(rates)
         setCurrencyData(rates);
-        console.log(data);
+        console.log("DATA ", data);
         setCurrencies(arr);
-        console.log("Data fetched:", arr);
+        //console.log("Data fetched:", arr);
       })
       .catch((error) => console.error(error));
   };
@@ -44,8 +45,6 @@ const CurrencyExchangeRate = () => {
     setCurrencyValue(currencyData[x]);
     console.log(currencyData[x]);
   };
-
-  console.log("Component rendered");
 
   return (
     <div className="container-fluid">
@@ -91,8 +90,10 @@ const CurrencyExchangeRate = () => {
           </ul>
         </div>
       </div>
+      {console.log("Component rendered")}
     </div>
   );
 };
 
-ReactDOM.render(<CurrencyExchangeRate />, document.getElementById("root1"));
+// const root = ReactDOM.createRoot(document.getElementById("root1"));
+// root.render(<CurrencyExchangeRate />);
